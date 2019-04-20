@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+    <AddIn Type="Command">
+        <Name>Revit Fabulous</Name>
+        <Assembly>RevitFabulous.Revit.dll</Assembly>
+        <AddInId>F6EF1628-2A4B-4276-89B7-4A89249EB79E</AddInId>
+        <FullClassName>RevitFabulous.Revit.CounterCommand</FullClassName>
+        <Text>Counter</Text>
+        <VendorId>ACME</VendorId>
+        <VendorDescription></VendorDescription>
+    </AddIn>
+</RevitAddIns>

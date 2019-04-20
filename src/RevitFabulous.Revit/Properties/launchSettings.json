@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RevitFabulous.Revit": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Autodesk\\Revit 2019\\Revit.exe"
+    }
+  }
+}
