@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
     <AddIn Type="Command">
-        <Name>ModelQueryCommand</Name>
+        <Name>ViewManagerCommand</Name>
         <Assembly>RevitFabulous.Revit.dll</Assembly>
         <AddInId>293DF575-3C31-479A-BE94-AECCF1C38792</AddInId>
-        <FullClassName>RevitFabulous.Revit.ModelQueryCommand</FullClassName>
-        <Text>Query Elements</Text>
+        <FullClassName>RevitFabulous.Revit.ViewManagerCommand</FullClassName>
+        <Text>View Manager</Text>
         <VendorId>ACME</VendorId>
         <VendorDescription></VendorDescription>
     </AddIn>

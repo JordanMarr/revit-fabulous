@@ -7,7 +7,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.fs" />
     <Compile Include="Controller.fs" />
-    <Compile Include="ModelQueryPage.fs" />
+    <Compile Include="ViewManagerPage.fs" />
     <Compile Include="CounterPage.fs" />
     <Compile Include="Main.fs" />
     <None Include="app.config" />
@@ -23,6 +23,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <PackageReference Include="Fabulous.SimpleElements" Version="0.33.0" />
     <PackageReference Include="Revit.RevitApi.x64" Version="2019.0.0" />
     <PackageReference Include="Revit.RevitApiUI.x64" Version="2019.0.0" />
     <PackageReference Include="Xamarin.Forms" Version="3.4.0.1009999" />

@@ -7,7 +7,7 @@
     </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ModelQuery.fs" />
+    <Compile Include="ViewManager.fs" />
   </ItemGroup>
 
   <ItemGroup>
