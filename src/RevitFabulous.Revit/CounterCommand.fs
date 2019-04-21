@@ -9,7 +9,8 @@ type CounterCommand() =
     interface IExternalCommand with
         member this.Execute(commandData: ExternalCommandData, message: byref<string>, elements: ElementSet): Result = 
             try
-                Controller.showCounterDialog()            
+                CounterPage.program |> Controller.showDialog
+                
                 Result.Succeeded
 
             with ex ->

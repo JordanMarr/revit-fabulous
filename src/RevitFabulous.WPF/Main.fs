@@ -8,5 +8,6 @@ module Main =
     [<STAThread>]
     let main(_args) =
 
-        Controller.showCounterDialog()
+        //Controller.showCounterDialog()
+        ModelQueryPage.programLiveUpdate |> Controller.showDialog
         0

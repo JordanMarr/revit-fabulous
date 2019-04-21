@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ModelQueryCommand.fs" />
     <Compile Include="CounterCommand.fs" />
     <None Include="RevitFabulous.addin" />
   </ItemGroup>
@@ -17,7 +18,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RevitFabulous.Domain\RevitFabulous.Domain.fsproj" />
     <ProjectReference Include="..\RevitFabulous.WPF\RevitFabulous.WPF.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.5.2" />
+    <PackageReference Update="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

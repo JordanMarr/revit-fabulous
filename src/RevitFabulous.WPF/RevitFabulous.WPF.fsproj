@@ -6,8 +6,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.fs" />
-    <Compile Include="CounterPage.fs" />
     <Compile Include="Controller.fs" />
+    <Compile Include="ModelQueryPage.fs" />
+    <Compile Include="CounterPage.fs" />
     <Compile Include="Main.fs" />
     <None Include="app.config" />
   </ItemGroup>
@@ -30,6 +31,8 @@
     <PackageReference Include="Fabulous.LiveUpdate" Version="0.33.2" />
     <PackageReference Include="FSharp.Core" Version="4.5.2" />
     <PackageReference Include="Fabulous.CustomControls" Version="0.33.2" />
-    <PackageReference Update="FSharp.Core" Version="4.5.2" /> <!-- workaround for VSMac bug https://github.com/mono/monodevelop/pull/5137 -->
+    <ProjectReference Include="..\RevitFabulous.Domain\RevitFabulous.Domain.fsproj" />
+    <PackageReference Update="FSharp.Core" Version="4.5.2" />
+    <PackageReference Update="System.ValueTuple" Version="4.5.0" /> <!-- workaround for VSMac bug https://github.com/mono/monodevelop/pull/5137 -->
   </ItemGroup>
 </Project>

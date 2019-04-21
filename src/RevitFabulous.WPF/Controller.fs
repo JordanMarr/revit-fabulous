@@ -4,6 +4,7 @@ open Xamarin.Forms
 open Xamarin.Forms.Platform.WPF
 open Fabulous.Core
 open Fabulous.DynamicViews
+open RevitFabulous.Domain
 
 type private MainWindow() = 
     inherit FormsApplicationPage()
@@ -33,13 +34,14 @@ module Controller =
             if not Forms.IsInitialized then Forms.Init()
             initialized <- true
 
-    let private showDialog program =
+    let showDialog program =
         init()
         let win = MainWindow()
         program |> GenericApp |> win.LoadApplication 
-        win.Width <- 400.
         win.ShowDialog() |> ignore
 
-    /// Loads the counter dialog
-    let showCounterDialog() = 
-        CounterPage.program |> showDialog
+    let getWindow program =
+        init()
+        let win = MainWindow()
+        program |> GenericApp |> win.LoadApplication
+        win :> System.Windows.Window
