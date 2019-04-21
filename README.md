@@ -30,3 +30,9 @@ This is an F# project using Fabulous.  It consumes the Domain project, but is ag
 ### Why not put everything in one project?
 The WPF project is agnostic of Revit API and the Revit Addin project.  While you can certainly merge the projects together, I think this separation of concerns will emphasize creating a proper F# domain model that can be shared between the two projects.  It will also eliminate the temptation to reference the Revit OOP API directly in your Fabulous models (which might prevent you from taking advantage of the goodness of the F# type system and immutability).
 There are also a few practical reasons:  The Fabulous "Live Update" feature sometimes chokes on certain constructs in code.  For example, I tried to use a "System.Lazy" to ensure that the "init()" function was called only once, but this caused LiveUpdate to choke.  So I think this is a good reason to keep the WPF project as simple as possible.  Also note that the Revit project supports Revit 2019 "edit and continue" via the project pre-build script, so Revit code changes can be handled separately.
+
+### Why .NET 4.6.1?
+4.6.1 is the minimum framework that will work with Fabulous.  Revit 2019 technically specs a newer version of .NET, but I went with the older version possible to for better compatibility with older versions of Revit.
+
+### Why FSharp.Core v4.5.2?
+Because that's what Fabulous uses, and because I had a weird "Method not found" bug when I tried to reference 4.6.2 in the template projects.  Reverting back to 4.5.2 fixed it.
