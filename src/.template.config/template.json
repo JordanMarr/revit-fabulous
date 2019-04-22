@@ -1,0 +1,11 @@
+{
+  "author": "Jordan Marr <https://github.com/JordanMarr/revit-fabulous>",
+  "classifications": [ "F#", "FSharp", "Revit", "Fabulous", "MVU", "WPF" ], 
+  "name": "Revit-Fabulous Project",
+  "identity": "RevitFabulous",
+  "shortName": "revit-fabulous",
+  "tags": {
+    "language": "F#"
+  },
+  "sourceName": "RevitFabulous"
+}
