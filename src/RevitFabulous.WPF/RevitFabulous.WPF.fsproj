@@ -24,8 +24,6 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <PackageReference Include="Fabulous.SimpleElements" Version="0.33.0" />
-    <PackageReference Include="Revit.RevitApi.x64" Version="2019.0.0" />
-    <PackageReference Include="Revit.RevitApiUI.x64" Version="2019.0.0" />
     <PackageReference Include="Xamarin.Forms" Version="3.4.0.1009999" />
     <PackageReference Include="Xamarin.Forms.Platform.WPF" Version="3.4.0.1009999" />
     <PackageReference Include="Fabulous.Core" Version="0.33.2" />
