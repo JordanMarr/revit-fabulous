@@ -71,8 +71,10 @@ module ViewManagerPage =
 
     /// Boostraps the page
     let program (getViews: unit -> View seq) (setActiveView: View -> unit) = 
-        let i = fun () -> init getViews setActiveView
-        Program.mkProgram i update view
+        Program.mkProgram 
+            (fun () -> init getViews setActiveView) // Create a parameterless adapter for the "init" function
+            update 
+            view
 
     /// Provides a parameterless function with stubbed data to be used by LiveUpdate
     let programLiveUpdate =
