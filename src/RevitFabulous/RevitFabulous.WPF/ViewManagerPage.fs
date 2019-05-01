@@ -77,18 +77,21 @@ module ViewManagerPage =
             view
 
     /// Provides a parameterless function with stubbed data to be used by LiveUpdate
-    let programLiveUpdate =
+    let programLiveUpdate() =
 
-        let getViewsStub = fun () -> seq {
+        let mutable views = seq {
             yield { View.Id = 1; Name = "View 1"; IsActive = false }
             yield { View.Id = 2; Name = "View 2"; IsActive = true }
             yield { View.Id = 3; Name = "View 3"; IsActive = false }
             yield { View.Id = 4; Name = "View 4"; IsActive = false }
         }
 
+        let getViewsStub() = views
+
         let setActiveViewStub view =
-            ()
+            views <- 
+                views |> Seq.map (fun v -> { v with IsActive = v = view })
 
         program getViewsStub setActiveViewStub
-                
-        
+            
+    
