@@ -69,15 +69,15 @@ module ViewManagerPage =
             )
         )
 
-    /// Boostraps the page
+    /// Initialize the program
     let program (getViews: unit -> View seq) (setActiveView: View -> unit) = 
         Program.mkProgram 
             (fun () -> init getViews setActiveView) // Create a parameterless adapter for the "init" function
             update 
             view
 
-    /// Provides a parameterless function with stubbed data to be used by LiveUpdate
-    let programLiveUpdate() =
+    /// Provide a parameterless entry point with stubbed data to be used by LiveUpdate
+    let programLiveUpdate =
 
         let mutable views = seq {
             yield { View.Id = 1; Name = "View 1"; IsActive = false }
