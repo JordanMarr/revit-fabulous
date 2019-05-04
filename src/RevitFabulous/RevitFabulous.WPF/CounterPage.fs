@@ -20,7 +20,9 @@ module CounterPage =
 
     let initModel = { Count = 0; Step = 1; TimerOn=false }
 
-    let init () = initModel, Cmd.none
+    let init () = 
+        let m = ModelStorage.readModel() |> Option.map id |> Option.defaultValue initModel
+        m, Cmd.none
 
     let timerCmd = 
         async { do! Async.Sleep 200
@@ -28,17 +30,21 @@ module CounterPage =
         |> Cmd.ofAsyncMsg
 
     let update msg model =
-        match msg with
-        | Increment -> { model with Count = model.Count + model.Step }, Cmd.none
-        | Decrement -> { model with Count = model.Count - model.Step }, Cmd.none
-        | Reset -> init ()
-        | SetStep n -> { model with Step = n }, Cmd.none
-        | TimerToggled on -> { model with TimerOn = on }, (if on then timerCmd else Cmd.none)
-        | TimedTick -> 
-            if model.TimerOn then 
-                { model with Count = model.Count + model.Step }, timerCmd
-            else 
-                model, Cmd.none
+        let (m, cmd) =
+            match msg with
+            | Increment -> { model with Count = model.Count + model.Step }, Cmd.none
+            | Decrement -> { model with Count = model.Count - model.Step }, Cmd.none
+            | Reset -> init ()
+            | SetStep n -> { model with Step = n }, Cmd.none
+            | TimerToggled on -> { model with TimerOn = on }, (if on then timerCmd else Cmd.none)
+            | TimedTick -> 
+                if model.TimerOn then 
+                    { model with Count = model.Count + model.Step }, timerCmd
+                else 
+                    model, Cmd.none
+        
+        ModelStorage.saveModel m
+        m, cmd
 
     let view (model: Model) dispatch =
         View.ContentPage(

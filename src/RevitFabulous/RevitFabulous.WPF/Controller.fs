@@ -5,6 +5,61 @@ open Xamarin.Forms.Platform.WPF
 open Fabulous.Core
 open Fabulous.DynamicViews
 open RevitFabulous.Domain
+open System
+
+module ModelStorage =
+    open MBrace.FsPickler.Json
+    let path = @"C:\Windows\Temp\model.json"
+    let serializer = JsonSerializer(indent = true)
+    let utf8 = Text.UTF8Encoding(false)
+
+    let saveModel(model: 'model) =
+        let json = 
+            use stream = new IO.MemoryStream()
+            serializer.Serialize(stream, model)
+            stream.ToArray() |> utf8.GetString
+
+        IO.File.WriteAllText(path, json)
+
+    let readModel<'model>() : 'model option =
+        if System.IO.File.Exists(path) then
+            try
+                let json = System.IO.File.ReadAllText(path)
+                use reader = new IO.StringReader(json)
+                
+                try
+                    serializer.Deserialize<'model>(reader) |> Some
+                with ex ->
+                    let recordValue = serializer.Deserialize<FSharp.Compiler.PortaCode.Interpreter.RecordValue>(reader)
+                    let (FSharp.Compiler.PortaCode.Interpreter.RecordValue values) = recordValue
+                    FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
+
+                //match serializer.Deserialize<obj>(reader) with
+                //| :? FSharp.Compiler.PortaCode.Interpreter.RecordValue as recordValue ->
+                //    let (FSharp.Compiler.PortaCode.Interpreter.RecordValue values) = recordValue
+                //    FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
+                //| _ as o -> 
+                //    o :?> 'model |> Some
+                //let recordValue = o :?> FSharp.Compiler.PortaCode.Interpreter.RecordValue
+                //let recordValue = serializer.Deserialize<FSharp.Compiler.PortaCode.Interpreter.RecordValue>(reader)
+                //let (FSharp.Compiler.PortaCode.Interpreter.RecordValue values) = recordValue
+                //FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
+            with ex ->
+                None
+        else
+            None
+
+
+    //let readModel() : 'model option =
+    //    if System.IO.File.Exists(path) then
+    //        try
+    //            let json = System.IO.File.ReadAllText(path)
+    //            use reader = new IO.StringReader(json)
+    //            Some (serializer.Deserialize<'model>(reader))
+    //        with ex ->
+    //            None
+    //    else
+    //        None
 
 type private MainWindow() = 
     inherit FormsApplicationPage()
