@@ -9,7 +9,15 @@ module ModelStorage =
     open System.Reflection
 
     // TODO: Store in app properties once it is working
-    let path = @"C:\Windows\Temp\model.json"
+    let private path = @"C:\Windows\Temp\model.json"
+    
+    let private saveJson (json: string) =
+        IO.File.WriteAllText(path, json)
+
+    let private loadJson() =
+        if System.IO.File.Exists(path)
+        then System.IO.File.ReadAllText(path) |> Some
+        else None
 
     let serializer = JsonSerializer(indent = true)
     let utf8 = Text.UTF8Encoding(false)
@@ -48,15 +56,15 @@ module ModelStorage =
             serializer.Serialize(stream, recordValue)
             stream.ToArray() |> utf8.GetString
 
-        IO.File.WriteAllText(path, json)
+        saveJson(json)
 
     /// Reads the given model (stored as a serialized RecordValue),
     /// and then returns it to the caller as either a simple record (as defined by the user),
     /// or as a RecordValue (as defined by PortaCode / LiveUpdate.
     let readModel<'model>() : 'model option =
-        if System.IO.File.Exists(path) then
+        match loadJson() with
+        | Some json ->
             try
-                let json = System.IO.File.ReadAllText(path)
                 use reader = new IO.StringReader(json)
                                 
                 let recordValue = serializer.Deserialize<FSharp.Compiler.PortaCode.Interpreter.RecordValue>(reader)                
@@ -66,14 +74,14 @@ module ModelStorage =
                 else FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
             with ex ->
                 None
-        else
+        | None ->
             None
             
     let persistModelDuringLiveUpdate (program: Program<'model, 'msg, _>) =
         let msInit () =
             let initModel,cmd = program.init ()
             let model = readModel() |> Option.defaultValue initModel
-            initModel,cmd
+            model,cmd
 
         let msUpdate msg model =
             let newModel,cmd = program.update msg model
