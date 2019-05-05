@@ -9,14 +9,43 @@ open System
 
 module ModelStorage =
     open MBrace.FsPickler.Json
+    open Microsoft.FSharp.Reflection
+    open System.Reflection
+
     let path = @"C:\Windows\Temp\model.json"
     let serializer = JsonSerializer(indent = true)
     let utf8 = Text.UTF8Encoding(false)
 
-    let saveModel(model: 'model) =
+    module private Reflection = 
+        let isOption (t: System.Type) = 
+            t.IsGenericType && t.GetGenericTypeDefinition() = typedefof<Option<_>>  
+
+        /// Gets the value of a property.  
+        /// If property is an Option<> type, returns the Option<>.Value.
+        let getPropertyValue (o: obj) (p: PropertyInfo) =
+            let pVal = p.GetValue(o)
+            if isOption(p.PropertyType) then
+                    match pVal with
+                    | null -> null  // x is None
+                    | _ -> match pVal.GetType().GetProperty("Value") with
+                            | null -> null  // x is not an option
+                            | prop -> prop.GetValue(pVal, null)
+            else pVal
+
+        let convertToRecordValue<'model> (model: 'model) =
+            FSharpType.GetRecordFields(typeof<'model>, BindingFlags.Public)
+            |> Array.map (getPropertyValue model)
+            |> FSharp.Compiler.PortaCode.Interpreter.RecordValue
+
+    let saveModel model =
+        let recordValue =
+            match (model :> obj) with
+            | :? FSharp.Compiler.PortaCode.Interpreter.RecordValue as rv -> rv
+            | _ -> model |> Reflection.convertToRecordValue
+
         let json = 
             use stream = new IO.MemoryStream()
-            serializer.Serialize(stream, model)
+            serializer.Serialize(stream, recordValue)
             stream.ToArray() |> utf8.GetString
 
         IO.File.WriteAllText(path, json)
@@ -26,40 +55,15 @@ module ModelStorage =
             try
                 let json = System.IO.File.ReadAllText(path)
                 use reader = new IO.StringReader(json)
-                
-                try
-                    serializer.Deserialize<'model>(reader) |> Some
-                with ex ->
-                    let recordValue = serializer.Deserialize<FSharp.Compiler.PortaCode.Interpreter.RecordValue>(reader)
-                    let (FSharp.Compiler.PortaCode.Interpreter.RecordValue values) = recordValue
-                    FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
+                                
+                let recordValue = serializer.Deserialize<FSharp.Compiler.PortaCode.Interpreter.RecordValue>(reader)
+                let (FSharp.Compiler.PortaCode.Interpreter.RecordValue values) = recordValue
+                FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
 
-                //match serializer.Deserialize<obj>(reader) with
-                //| :? FSharp.Compiler.PortaCode.Interpreter.RecordValue as recordValue ->
-                //    let (FSharp.Compiler.PortaCode.Interpreter.RecordValue values) = recordValue
-                //    FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
-                //| _ as o -> 
-                //    o :?> 'model |> Some
-                //let recordValue = o :?> FSharp.Compiler.PortaCode.Interpreter.RecordValue
-                //let recordValue = serializer.Deserialize<FSharp.Compiler.PortaCode.Interpreter.RecordValue>(reader)
-                //let (FSharp.Compiler.PortaCode.Interpreter.RecordValue values) = recordValue
-                //FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
             with ex ->
                 None
         else
             None
-
-
-    //let readModel() : 'model option =
-    //    if System.IO.File.Exists(path) then
-    //        try
-    //            let json = System.IO.File.ReadAllText(path)
-    //            use reader = new IO.StringReader(json)
-    //            Some (serializer.Deserialize<'model>(reader))
-    //        with ex ->
-    //            None
-    //    else
-    //        None
 
 type private MainWindow() = 
     inherit FormsApplicationPage()

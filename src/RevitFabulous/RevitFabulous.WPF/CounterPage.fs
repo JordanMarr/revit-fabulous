@@ -17,12 +17,13 @@ module CounterPage =
         | SetStep of int
         | TimerToggled of bool
         | TimedTick
+        | Refresh
 
     let initModel = { Count = 0; Step = 1; TimerOn=false }
 
     let init () = 
-        let m = ModelStorage.readModel() |> Option.map id |> Option.defaultValue initModel
-        m, Cmd.none
+        let m = initModel
+        m, Cmd.ofMsg Refresh
 
     let timerCmd = 
         async { do! Async.Sleep 200
@@ -42,8 +43,13 @@ module CounterPage =
                     { model with Count = model.Count + model.Step }, timerCmd
                 else 
                     model, Cmd.none
+            | Refresh ->
+                let m = ModelStorage.readModel() |> Option.defaultValue model
+                m, Cmd.none
         
-        ModelStorage.saveModel m
+        if msg <> Refresh then
+            ModelStorage.saveModel m
+
         m, cmd
 
     let view (model: Model) dispatch =
@@ -60,6 +66,7 @@ module CounterPage =
                     View.Slider(minimumMaximum = (0.0, 10.0), value = double model.Step, valueChanged = (fun args -> dispatch (SetStep (int (args.NewValue + 0.5)))), horizontalOptions = LayoutOptions.FillAndExpand)
                     View.Label(text = sprintf "Step size: %d" model.Step, horizontalOptions = LayoutOptions.Center) 
                     View.Button(text = "Reset", horizontalOptions = LayoutOptions.Center, command = (fun () -> dispatch Reset), canExecute = (model <> initModel))
+                    View.Button(text = "Refresh", horizontalOptions = LayoutOptions.Center, command = (fun () -> dispatch Refresh))
                 ]))
 
     // Note, this declaration is needed if you enable LiveUpdate
