@@ -32,7 +32,7 @@ module Controller =
             app.ShutdownMode <- System.Windows.ShutdownMode.OnExplicitShutdown // This is key to allow reuse of MainWindow.
             if not Forms.IsInitialized then Forms.Init()
             initialized <- true
-
+    
     let showDialog program =
         init()
         let win = MainWindow()

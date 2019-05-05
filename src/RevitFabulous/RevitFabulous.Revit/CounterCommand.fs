@@ -14,4 +14,5 @@ type CounterCommand() =
                 Result.Succeeded
 
             with ex ->
+                TaskDialog.Show("Error", ex.ToString()) |> ignore
                 Result.Failed
