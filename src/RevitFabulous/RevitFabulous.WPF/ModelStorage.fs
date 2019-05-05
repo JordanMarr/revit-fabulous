@@ -8,16 +8,31 @@ module ModelStorage =
     open Microsoft.FSharp.Reflection
     open System.Reflection
 
-    // TODO: Store in app properties once it is working
-    let private path = @"C:\Windows\Temp\model.json"
+    module FileStore =
+        let private path = @"C:\Windows\Temp\fabulous-model.json"
     
-    let private saveJson (json: string) =
-        IO.File.WriteAllText(path, json)
+        let saveJson json =
+            IO.File.WriteAllText(path, json)
 
-    let private loadJson() =
-        if System.IO.File.Exists(path)
-        then System.IO.File.ReadAllText(path) |> Some
-        else None
+        let loadJson() =
+            if System.IO.File.Exists(path)
+            then System.IO.File.ReadAllText(path) |> Some
+            else None
+
+    // TODO: this doesn't work correctly
+    module AppPropertyStore = 
+        let saveJson (json: string) =
+            System.Windows.Application.Current.Properties.["model"] <- json
+
+        let loadJson() =
+            if System.Windows.Application.Current.Properties.Contains("model") then 
+                let json = System.Windows.Application.Current.Properties.["model"]
+                Some (json :?> string)
+            else
+                None
+
+    let saveJson = FileStore.saveJson
+    let loadJson = FileStore.loadJson
 
     let serializer = JsonSerializer(indent = true)
     let utf8 = Text.UTF8Encoding(false)
