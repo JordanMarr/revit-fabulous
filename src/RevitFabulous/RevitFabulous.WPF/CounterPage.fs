@@ -17,7 +17,6 @@ module CounterPage =
         | SetStep of int
         | TimerToggled of bool
         | TimedTick
-        | Refresh
 
     let initModel = { Count = 0; Step = 1; TimerOn=false }
 
@@ -31,23 +30,17 @@ module CounterPage =
         |> Cmd.ofAsyncMsg
 
     let update msg model =
-        let (m, cmd) =
-            match msg with
-            | Increment -> { model with Count = model.Count + model.Step }, Cmd.none
-            | Decrement -> { model with Count = model.Count - model.Step }, Cmd.none
-            | Reset -> init ()
-            | SetStep n -> { model with Step = n }, Cmd.none
-            | TimerToggled on -> { model with TimerOn = on }, (if on then timerCmd else Cmd.none)
-            | TimedTick -> 
-                if model.TimerOn then 
-                    { model with Count = model.Count + model.Step }, timerCmd
-                else 
-                    model, Cmd.none
-            | Refresh ->
-                let m = ModelStorage.readModel() |> Option.defaultValue model
-                m, Cmd.none
-        
-        m, cmd
+        match msg with
+        | Increment -> { model with Count = model.Count + model.Step }, Cmd.none
+        | Decrement -> { model with Count = model.Count - model.Step }, Cmd.none
+        | Reset -> init ()
+        | SetStep n -> { model with Step = n }, Cmd.none
+        | TimerToggled on -> { model with TimerOn = on }, (if on then timerCmd else Cmd.none)
+        | TimedTick -> 
+            if model.TimerOn then 
+                { model with Count = model.Count + model.Step }, timerCmd
+            else 
+                model, Cmd.none
 
     let view (model: Model) dispatch =
         View.ContentPage(
@@ -63,7 +56,6 @@ module CounterPage =
                     View.Slider(minimumMaximum = (0.0, 10.0), value = double model.Step, valueChanged = (fun args -> dispatch (SetStep (int (args.NewValue + 0.5)))), horizontalOptions = LayoutOptions.FillAndExpand)
                     View.Label(text = sprintf "Step size: %d" model.Step, horizontalOptions = LayoutOptions.Center) 
                     View.Button(text = "Reset", horizontalOptions = LayoutOptions.Center, command = (fun () -> dispatch Reset), canExecute = (model <> initModel))
-                    View.Button(text = "Refresh", horizontalOptions = LayoutOptions.Center, command = (fun () -> dispatch Refresh))
                 ]))
                     
     let program = 
