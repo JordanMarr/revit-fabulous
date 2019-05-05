@@ -8,7 +8,7 @@ module Main =
     [<STAThread>]
     let main(_args) =
 
-        CounterPage.program
+        ViewManagerPage.programLiveUpdate
         |> Controller.showDialog
 
         0

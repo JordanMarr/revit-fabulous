@@ -77,8 +77,7 @@ module CounterPage =
             )
             (fun msg model -> 
                 let (m,c) = update msg model
-                if m <> model 
-                then ModelStorage.saveModel m
+                ModelStorage.saveModel m
                 m,c
             )
             view
