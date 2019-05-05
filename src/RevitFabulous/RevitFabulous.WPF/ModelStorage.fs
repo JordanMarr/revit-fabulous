@@ -33,6 +33,8 @@ module ModelStorage =
             |> Array.map (getPropertyValue model)
             |> FSharp.Compiler.PortaCode.Interpreter.RecordValue
 
+    /// Converts the current model to a RecordValue and then serializes 
+    /// it us FsPickler to ensure that any functions are preserved.
     let saveModel model =
         let recordValue =
             match (model :> obj) with
@@ -46,6 +48,9 @@ module ModelStorage =
 
         IO.File.WriteAllText(path, json)
 
+    /// Reads the given model (stored as a serialized RecordValue),
+    /// and then returns it to the caller as either a simple record (as defined by the user),
+    /// or as a RecordValue (as defined by PortaCode / LiveUpdate.
     let readModel<'model>() : 'model option =
         if System.IO.File.Exists(path) then
             try
@@ -61,3 +66,18 @@ module ModelStorage =
                 None
         else
             None
+
+    /// Calls mkProgram but also serializes model state.
+    let mkProgram init update view =
+        Fabulous.Core.Program.mkProgram 
+            (fun () ->
+                let m,c = init()
+                let model = readModel() |> Option.defaultValue m
+                model,c
+            )
+            (fun msg model -> 
+                let (m,c) = update msg model
+                saveModel m
+                m,c
+            )
+            view

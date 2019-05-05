@@ -68,19 +68,7 @@ module CounterPage =
                     
     let program = 
 #if DEBUG
-        // Keep track of Model state so that it can be reloaded during live update
-        Program.mkProgram 
-            (fun () ->
-                let m,c = init()
-                let model = ModelStorage.readModel() |> Option.defaultValue m
-                model,c
-            )
-            (fun msg model -> 
-                let (m,c) = update msg model
-                ModelStorage.saveModel m
-                m,c
-            )
-            view
+        ModelStorage.mkProgram init update view
 #else
         Program.mkProgram init update view
 #endif
