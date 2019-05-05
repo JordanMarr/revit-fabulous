@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
+    <AddIn Type="Application">
+        <Name>ModelStream</Name>
+        <Assembly>RevitFabulous.Revit.dll</Assembly>
+        <FullClassName>RevitFabulous.Revit.Application</FullClassName>
+        <ClientId>6750EC69-4A1A-44C4-A17B-FDE161339852</ClientId>
+        <VendorId>ACME</VendorId>
+        <VendorDescription></VendorDescription>
+    </AddIn>
     <AddIn Type="Command">
         <Name>ViewManagerCommand</Name>
         <Assembly>RevitFabulous.Revit.dll</Assembly>
