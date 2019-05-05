@@ -15,9 +15,13 @@ module ModelStorage =
             IO.File.WriteAllText(path, json)
 
         let loadJson() =
-            if System.IO.File.Exists(path)
-            then System.IO.File.ReadAllText(path) |> Some
-            else None
+            if System.IO.File.Exists(path) then
+                let json = System.IO.File.ReadAllText(path)
+                if not (json |> String.IsNullOrWhiteSpace)
+                then Some json
+                else None
+            else
+                None
 
     // TODO: this does not work correctly because LiveUpdate creates a new Application.Current.
     module private AppPropertyStore = 
@@ -61,16 +65,23 @@ module ModelStorage =
     /// Converts the current model to a RecordValue and then serializes 
     /// it us FsPickler to ensure that any functions are preserved.
     let saveModel model =
-        let recordValue =
-            match (model :> obj) with
-            | :? FSharp.Compiler.PortaCode.Interpreter.RecordValue as rv -> rv
-            | _ -> model |> Reflection.convertToRecordValue
-
         let json = 
-            use stream = new IO.MemoryStream()
-            serializer.Serialize(stream, recordValue)
-            stream.ToArray() |> utf8.GetString
+            try
+                let recordValue =
+                    match (model :> obj) with
+                    | :? FSharp.Compiler.PortaCode.Interpreter.RecordValue as rv -> rv
+                    | _ -> model |> Reflection.convertToRecordValue
 
+            
+                use stream = new IO.MemoryStream()
+            
+                serializer.Serialize(stream, recordValue)
+                stream.ToArray() |> utf8.GetString
+
+            with ex ->
+                System.Windows.MessageBox.Show(ex.ToString()) |> ignore
+                ""
+            
         saveJson(json)
 
     /// Reads the given model (stored as a serialized RecordValue),
@@ -93,20 +104,20 @@ module ModelStorage =
             None
             
     let persistModelDuringLiveUpdate (program: Program<'model, 'msg, _>) =
-        let msInit () =
-            let initModel,cmd = program.init ()
-            let model = readModel() |> Option.defaultValue initModel
-            model,cmd
+            let msInit () =
+                let initModel,cmd = program.init ()
+                let model = readModel() |> Option.defaultValue initModel
+                model,cmd
 
-        let msUpdate msg model =
-            let newModel,cmd = program.update msg model
-            saveModel newModel
-            newModel,cmd
-            
-        let msView model dispatch =
-            program.view model dispatch
+            let msUpdate msg model =
+                let newModel,cmd = program.update msg model
+                saveModel newModel
+                newModel,cmd
                 
-        { program with
-            init = msInit 
-            update = msUpdate
-            view = msView }
+            let msView model dispatch =
+                program.view model dispatch
+                    
+            { program with
+                init = msInit 
+                update = msUpdate
+                view = msView }
