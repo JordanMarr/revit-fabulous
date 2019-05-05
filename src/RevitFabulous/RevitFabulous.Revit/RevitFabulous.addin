@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
     <AddIn Type="Application">
-        <Name>ModelStream</Name>
+        <Name>RevitFabulous</Name>
         <Assembly>RevitFabulous.Revit.dll</Assembly>
         <FullClassName>RevitFabulous.Revit.Application</FullClassName>
         <ClientId>6750EC69-4A1A-44C4-A17B-FDE161339852</ClientId>
@@ -13,7 +13,7 @@
         <Assembly>RevitFabulous.Revit.dll</Assembly>
         <AddInId>293DF575-3C31-479A-BE94-AECCF1C38792</AddInId>
         <FullClassName>RevitFabulous.Revit.ViewManagerCommand</FullClassName>
-        <Text>View Manager</Text>
+        <Text>Fabulous View Manager Demo</Text>
         <VendorId>ACME</VendorId>
         <VendorDescription></VendorDescription>
     </AddIn>
