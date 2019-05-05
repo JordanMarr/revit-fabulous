@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.fs" />
+    <Compile Include="ModelStorage.fs" />
     <Compile Include="Controller.fs" />
     <Compile Include="ViewManagerPage.fs" />
     <Compile Include="CounterPage.fs" />

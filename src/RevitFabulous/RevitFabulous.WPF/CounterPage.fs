@@ -56,7 +56,7 @@ module CounterPage =
                 verticalOptions = LayoutOptions.Center,
                 children = [ 
                     View.Label(text = sprintf "%d" model.Count, horizontalOptions = LayoutOptions.Center, widthRequest=200.0, horizontalTextAlignment=TextAlignment.Center)
-                    View.Button(text = "Increment (++)", command = (fun () -> dispatch Increment), horizontalOptions = LayoutOptions.Center, widthRequest = 100.)
+                    View.Button(text = "Increment (+)", command = (fun () -> dispatch Increment), horizontalOptions = LayoutOptions.Center, widthRequest = 100.)
                     View.Button(text = "Decrement (-)", command = (fun () -> dispatch Decrement), horizontalOptions = LayoutOptions.Center)
                     View.Label(text = "Timer", horizontalOptions = LayoutOptions.Center)
                     View.Switch(isToggled = model.TimerOn, toggled = (fun on -> dispatch (TimerToggled on.Value)), horizontalOptions = LayoutOptions.Center)
@@ -65,14 +65,14 @@ module CounterPage =
                     View.Button(text = "Reset", horizontalOptions = LayoutOptions.Center, command = (fun () -> dispatch Reset), canExecute = (model <> initModel))
                     View.Button(text = "Refresh", horizontalOptions = LayoutOptions.Center, command = (fun () -> dispatch Refresh))
                 ]))
-
-    // Note, this declaration is needed if you enable LiveUpdate
+                    
     let program = 
 #if DEBUG
+        // Keep track of Model state so that it can be reloaded during live update
         Program.mkProgram 
-            (fun () -> 
+            (fun () ->
                 let m,c = init()
-                let model = ModelStorage.readModel() |> Option.defaultValue { Count = 99; Step = 1; TimerOn=false }
+                let model = ModelStorage.readModel() |> Option.defaultValue m
                 model,c
             )
             (fun msg model -> 
