@@ -13,8 +13,7 @@ type private GenericApp<'model, 'msg> (program : Program<'model, 'msg, ('model -
     let runner = 
         program
 #if DEBUG
-        |> Program.withConsoleTrace
-        |> ModelStorage.persistModelDuringLiveUpdate
+        |> Program.withConsoleTrace        
 #endif
         |> Program.runWithDynamicView app
 

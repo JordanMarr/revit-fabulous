@@ -60,3 +60,6 @@ module CounterPage =
                     
     let program = 
         Program.mkProgram init update view
+#if DEBUG
+        |> ModelStorage.persistModelDuringLiveUpdate
+#endif

@@ -75,6 +75,9 @@ module ViewManagerPage =
             (fun () -> init getViews setActiveView)
             update 
             view
+#if DEBUG
+        |> ModelStorage.persistModelDuringLiveUpdate
+#endif
     
     /// Provide a parameterless entry point with stubbed data to be used by LiveUpdate
     let programLiveUpdate =
