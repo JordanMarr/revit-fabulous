@@ -56,10 +56,11 @@ module ModelStorage =
                 let json = System.IO.File.ReadAllText(path)
                 use reader = new IO.StringReader(json)
                                 
-                let recordValue = serializer.Deserialize<FSharp.Compiler.PortaCode.Interpreter.RecordValue>(reader)
+                let recordValue = serializer.Deserialize<FSharp.Compiler.PortaCode.Interpreter.RecordValue>(reader)                
                 let (FSharp.Compiler.PortaCode.Interpreter.RecordValue values) = recordValue
-                FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
-
+                if typeof<'model> = typeof<obj>
+                then (box recordValue) :?> 'model |> Some
+                else FSharp.Reflection.FSharpValue.MakeRecord(typeof<'model>, values) :?> 'model |> Some
             with ex ->
                 None
         else

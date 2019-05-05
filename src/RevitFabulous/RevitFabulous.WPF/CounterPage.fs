@@ -23,7 +23,7 @@ module CounterPage =
 
     let init () = 
         let m = initModel
-        m, Cmd.ofMsg Refresh
+        m, Cmd.none
 
     let timerCmd = 
         async { do! Async.Sleep 200
@@ -47,9 +47,6 @@ module CounterPage =
                 let m = ModelStorage.readModel() |> Option.defaultValue model
                 m, Cmd.none
         
-        if msg <> Refresh then
-            ModelStorage.saveModel m
-
         m, cmd
 
     let view (model: Model) dispatch =
@@ -59,7 +56,7 @@ module CounterPage =
                 verticalOptions = LayoutOptions.Center,
                 children = [ 
                     View.Label(text = sprintf "%d" model.Count, horizontalOptions = LayoutOptions.Center, widthRequest=200.0, horizontalTextAlignment=TextAlignment.Center)
-                    View.Button(text = "Increment (+)", command = (fun () -> dispatch Increment), horizontalOptions = LayoutOptions.Center, widthRequest = 100.)
+                    View.Button(text = "Increment (++)", command = (fun () -> dispatch Increment), horizontalOptions = LayoutOptions.Center, widthRequest = 100.)
                     View.Button(text = "Decrement (-)", command = (fun () -> dispatch Decrement), horizontalOptions = LayoutOptions.Center)
                     View.Label(text = "Timer", horizontalOptions = LayoutOptions.Center)
                     View.Switch(isToggled = model.TimerOn, toggled = (fun on -> dispatch (TimerToggled on.Value)), horizontalOptions = LayoutOptions.Center)
@@ -70,4 +67,21 @@ module CounterPage =
                 ]))
 
     // Note, this declaration is needed if you enable LiveUpdate
-    let program = Program.mkProgram init update view
+    let program = 
+#if DEBUG
+        Program.mkProgram 
+            (fun () -> 
+                let m,c = init()
+                let model = ModelStorage.readModel() |> Option.defaultValue { Count = 99; Step = 1; TimerOn=false }
+                model,c
+            )
+            (fun msg model -> 
+                let (m,c) = update msg model
+                if m <> model 
+                then ModelStorage.saveModel m
+                m,c
+            )
+            view
+#else
+        Program.mkProgram init update view
+#endif
