@@ -8,7 +8,7 @@ module ModelStorage =
     open Microsoft.FSharp.Reflection
     open System.Reflection
 
-    module FileStore =
+    module private FileStore =
         let private path = @"C:\Windows\Temp\fabulous-model.json"
     
         let saveJson json =
@@ -19,8 +19,8 @@ module ModelStorage =
             then System.IO.File.ReadAllText(path) |> Some
             else None
 
-    // TODO: this doesn't work correctly
-    module AppPropertyStore = 
+    // TODO: this does not work correctly because LiveUpdate creates a new Application.Current.
+    module private AppPropertyStore = 
         let saveJson (json: string) =
             System.Windows.Application.Current.Properties.["model"] <- json
 
@@ -31,11 +31,11 @@ module ModelStorage =
             else
                 None
 
-    let saveJson = FileStore.saveJson
-    let loadJson = FileStore.loadJson
+    let private saveJson = FileStore.saveJson
+    let private loadJson = FileStore.loadJson
 
-    let serializer = JsonSerializer(indent = true)
-    let utf8 = Text.UTF8Encoding(false)
+    let private serializer = JsonSerializer(indent = true)
+    let private utf8 = Text.UTF8Encoding(false)
 
     module private Reflection = 
         let isOption (t: System.Type) = 
