@@ -1,5 +1,7 @@
 ﻿namespace RevitFabulous.WPF
 
+open Fabulous.Core
+
 module ModelStorage =
     open System
     open MBrace.FsPickler.Json
@@ -66,18 +68,22 @@ module ModelStorage =
                 None
         else
             None
+            
+    let persistModelDuringLiveUpdate (program: Program<'model, 'msg, _>) =
+        let msInit () =
+            let initModel,cmd = program.init ()
+            let model = readModel() |> Option.defaultValue initModel
+            initModel,cmd
 
-    /// Calls mkProgram but also serializes model state.
-    let mkProgram init update view =
-        Fabulous.Core.Program.mkProgram 
-            (fun () ->
-                let m,c = init()
-                let model = readModel() |> Option.defaultValue m
-                model,c
-            )
-            (fun msg model -> 
-                let (m,c) = update msg model
-                saveModel m
-                m,c
-            )
-            view
+        let msUpdate msg model =
+            let newModel,cmd = program.update msg model
+            saveModel newModel
+            newModel,cmd
+            
+        let msView model dispatch =
+            program.view model dispatch
+                
+        { program with
+            init = msInit 
+            update = msUpdate
+            view = msView }

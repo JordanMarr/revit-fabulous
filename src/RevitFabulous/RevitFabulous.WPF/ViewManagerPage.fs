@@ -71,17 +71,10 @@ namespace RevitFabulous.WPF
 
 //    /// Initialize the program
 //    let program (getViews: unit -> View seq) (setActiveView: View -> unit) = 
-//#if DEBUG
-//        ModelStorage.mkProgram
-//            (fun () -> init getViews setActiveView) // Create a parameterless adapter for the "init" function
-//            update 
-//            view
-//#else
 //        Program.mkProgram 
 //            (fun () -> init getViews setActiveView)
 //            update 
 //            view
-//#endif
     
 //    /// Provide a parameterless entry point with stubbed data to be used by LiveUpdate
 //    let programLiveUpdate =

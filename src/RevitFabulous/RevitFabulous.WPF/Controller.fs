@@ -14,6 +14,7 @@ type private GenericApp<'model, 'msg> (program : Program<'model, 'msg, ('model -
         program
 #if DEBUG
         |> Program.withConsoleTrace
+        |> ModelStorage.persistModelDuringLiveUpdate
 #endif
         |> Program.runWithDynamicView app
 

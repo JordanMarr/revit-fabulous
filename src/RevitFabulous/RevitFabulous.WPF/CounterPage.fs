@@ -59,8 +59,4 @@ module CounterPage =
                 ]))
                     
     let program = 
-#if DEBUG
-        ModelStorage.mkProgram init update view
-#else
         Program.mkProgram init update view
-#endif
